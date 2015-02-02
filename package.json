@@ -1,0 +1,37 @@
+{
+  "name": "circus-amd",
+  "version": "0.0.0",
+  "description": "Circus component AMD integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/walmartlabs/circus-amd.git"
+  },
+  "keywords": [
+    "circus",
+    "amd",
+    "webpack"
+  ],
+  "author": "Kevin Decker <kpdecker@gmail.com> (http://incaseofstairs.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/walmartlabs/circus-amd/issues"
+  },
+  "homepage": "https://github.com/walmartlabs/circus-amd",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "circus": "^1.2.1",
+    "gulp": "^3.8.10",
+    "gulp-istanbul": "^0.6.0",
+    "gulp-jscs": "^1.4.0",
+    "gulp-jshint": "^1.9.1",
+    "gulp-mocha": "^2.0.0",
+    "jshint-stylish": "^1.0.0",
+    "phantomjs": "^1.9.15",
+    "temp": "^0.8.1",
+    "webpack": "^1.5.3"
+  }
+}
