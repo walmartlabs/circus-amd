@@ -1,0 +1,50 @@
+!(function() {
+  if (!window.define) {
+    return;
+  }
+
+  var $cc = __webpack_components__.cc;
+  __webpack_components__.cc = function(componentName, initialChunks, requireFn) {
+    $cc(componentName, initialChunks, requireFn);
+
+    // Notify all of the pending AMD modules that this dependency is cleared
+    var nameBase = 'chunk_' + componentName;
+    define(nameBase + 0, function() {});
+    require([nameBase + 0]);
+  };
+
+  // Register any updates due to loading events within the jsonp handler
+  var $jsonp = window[{{jsonpFunction}}];
+  window[{{jsonpFunction}}] = function(componentName, chunkIds, chunkDeps, moreModules) {
+    $jsonp(componentName, chunkIds, chunkDeps, moreModules, function() {
+      var amdLoad = [];
+
+      for (var i = 0; i < chunkIds.length; i++) {
+        // Notify AMD that our chunk is loaded
+        var amdChunkName = 'chunk_' + componentName + chunkIds[i];
+        define(amdChunkName, function() {});
+        amdLoad.push(amdChunkName);
+      }
+
+      // This call is needed to force the above defines to be properly registered
+      // within the module system. require.js does not recognize `define` statements
+      // that occur in scripts that are loaded through external means, without a call
+      // such as this.
+      require(amdLoad);
+    });
+  };
+
+  // Report the modules that we export and what chunks must load to load them.
+  for (var componentName in moduleExports) {
+    var exports = moduleExports[componentName],
+        chunks = moduleChunks[componentName];
+
+    for (var name in exports) {
+      (function(componentName, name) {
+        define(name, ['chunk_' + componentName + chunks[exports[name]]], function() {
+          return installedComponents[componentName](name);
+        });
+      })(componentName, name);
+    }
+  }
+})();

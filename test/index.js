@@ -33,6 +33,132 @@ describe('loader integration', function() {
     temp.cleanupSync();
   });
 
+  describe('config', function() {
+    it('should handle arrays', function() {
+      var config = [{plugins: [1]}, {plugins: 2}, {}],
+          result = CircusAMD.config(config);
+
+      expect(result.length).to.equal(3);
+      expect(result[0].plugins[1]).to.equal(1);
+      expect(result[1].plugins[1]).to.equal(2);
+      expect(result[2].plugins.length).to.equal(1);
+    });
+  });
+
+  it('should expose externals to amd', function(done) {
+    var vendorEntry = Path.resolve(__dirname + '/fixtures/require-packages.js');
+
+    var html = fs.readFileSync(__dirname + '/client/require.html');
+    fs.writeFileSync(outputDir + '/index.html', html);
+
+    var require = fs.readFileSync(__dirname + '/client/require.js');
+    fs.writeFileSync(outputDir + '/require.js', require);
+
+    var exec = fs.readFileSync(__dirname + '/fixtures/amd-exec.js');
+    fs.writeFileSync(outputDir + '/exec.js', exec);
+
+    var config = Circus.config({
+      entry: vendorEntry,
+      output: {
+        component: 'vendor',
+
+        path: outputDir,
+        filename: 'vendor.js'
+      }
+    });
+    config = CircusAMD.config(config);
+
+    webpack(config, function(err, status) {
+      expect(err).to.not.exist;
+      expect(status.compilation.errors).to.be.empty;
+      expect(status.compilation.warnings).to.be.empty;
+
+      runPhantom(function(err, loaded) {
+        expect(loaded.scripts.length).to.equal(5);
+        expect(loaded.scripts[0]).to.match(/bootstrap.js$/);
+        expect(loaded.scripts[1]).to.match(/vendor.js$/);
+        expect(loaded.scripts[2]).to.match(/1\.vendor.js$/);
+        expect(loaded.scripts[3]).to.match(/require.js$/);
+        expect(loaded.scripts[4]).to.match(/exec.js$/);
+
+        expect(loaded.log).to.eql([
+          '_: true Handlebars: true',
+          'App: _: true Handlebars: true Vendor: true'
+        ]);
+
+        done();
+      });
+    });
+  });
+
+  it('should generate amd path config', function(done) {
+    var vendorEntry = Path.resolve(__dirname + '/fixtures/require-packages.js');
+
+    webpack(Circus.config({
+      context: Path.resolve(__dirname + '/fixtures'),
+      entry: vendorEntry,
+      output: {
+        component: 'vendor',
+        hideInternals: /webpack/,
+
+        libraryTarget: 'umd',
+        library: 'Circus',
+
+        path: outputDir + '/vendor',
+        filename: 'vendor.js',
+        chunkFilename: '[hash:3].[id].vendor.js'
+      }
+    }), function(err, status) {
+      expect(err).to.not.exist;
+      expect(status.compilation.errors).to.be.empty;
+      expect(status.compilation.warnings).to.be.empty;
+
+      var config = Circus.config({
+        resolve: {
+          modulesDirectories: [
+            outputDir
+          ]
+        }
+      });
+      expect(CircusAMD.amdPaths(config)).to.eql({
+        'lodash': 'vendor',
+        'handlebars/dist/cjs/handlebars.runtime': 'vendor',
+        'handlebars/dist/cjs/handlebars/base': 'vendor',
+        'handlebars/dist/cjs/handlebars/exception': 'vendor',
+        'handlebars/dist/cjs/handlebars/runtime': 'vendor',
+        'handlebars/dist/cjs/handlebars/safe-string': 'vendor',
+        'handlebars/dist/cjs/handlebars/utils': 'vendor',
+        'handlebars/runtime': 'vendor',
+
+        'vendor': 'vendor',
+        'vendor/packages': 'vendor',
+        'vendor/require-packages': 'vendor',
+
+        'chunk_vendor0': 'vendor',
+        'chunk_vendor1': 'vendor'
+      });
+
+      expect(CircusAMD.amdPaths(config, true)).to.eql({
+        'lodash': 'empty:',
+        'handlebars/dist/cjs/handlebars.runtime': 'empty:',
+        'handlebars/dist/cjs/handlebars/base': 'empty:',
+        'handlebars/dist/cjs/handlebars/exception': 'empty:',
+        'handlebars/dist/cjs/handlebars/runtime': 'empty:',
+        'handlebars/dist/cjs/handlebars/safe-string': 'empty:',
+        'handlebars/dist/cjs/handlebars/utils': 'empty:',
+        'handlebars/runtime': 'empty:',
+
+        'vendor': 'empty:',
+        'vendor/packages': 'empty:',
+        'vendor/require-packages': 'empty:',
+
+        'chunk_vendor0': 'empty:',
+        'chunk_vendor1': 'empty:'
+      });
+
+      done();
+    });
+  });
 
   function runPhantom(callback) {
     childProcess.execFile(phantom.path, [outputDir + '/runner.js', outputDir], function(err, stdout, stderr) {

@@ -1,3 +1,4 @@
 # circus-amd
 
-Provides AMD integration for Circus components.
+Allows existing AMD projects to import Circus components at runtime.
+

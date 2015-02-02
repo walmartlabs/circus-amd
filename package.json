@@ -33,5 +33,9 @@
     "phantomjs": "^1.9.15",
     "temp": "^0.8.1",
     "webpack": "^1.5.3"
+  },
+  "dependencies": {
+    "handlebars": "^2.0.0",
+    "lodash": "^3.0.1"
   }
 }
