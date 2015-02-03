@@ -8,10 +8,11 @@
   // segement below.
   define('circus-chunk', {
     load: function(name, req, onload) {
-      var match = /^(.+)_(\d+)$/.exec(name);
+      var match = /^(.+)_(\d+)$/.exec(name),
+          componentName = match[1];
 
       // Load the component itself
-      loadComponent(match[1], function() {
+      loadComponent(componentName, function() {
         // Load the chunk for this component
         installedComponents[componentName].e(match[2], function() {
           onload();
