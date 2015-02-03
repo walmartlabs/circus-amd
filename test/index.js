@@ -132,10 +132,7 @@ describe('loader integration', function() {
 
         'vendor': 'vendor',
         'vendor/packages': 'vendor',
-        'vendor/require-packages': 'vendor',
-
-        'chunk_vendor0': 'vendor',
-        'chunk_vendor1': 'vendor'
+        'vendor/require-packages': 'vendor'
       });
 
       expect(CircusAMD.amdPaths(config, true)).to.eql({
@@ -150,10 +147,7 @@ describe('loader integration', function() {
 
         'vendor': 'empty:',
         'vendor/packages': 'empty:',
-        'vendor/require-packages': 'empty:',
-
-        'chunk_vendor0': 'empty:',
-        'chunk_vendor1': 'empty:'
+        'vendor/require-packages': 'empty:'
       });
 
       done();
