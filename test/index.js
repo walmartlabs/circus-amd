@@ -179,21 +179,21 @@ describe('loader integration', function() {
         }
       });
       expect(CircusAMD.amdPaths(config)).to.eql({
-        'lodash': 'vendor',
-        'handlebars/dist/cjs/handlebars.runtime': 'vendor',
-        'handlebars/dist/cjs/handlebars/base': 'vendor',
-        'handlebars/dist/cjs/handlebars/exception': 'vendor',
-        'handlebars/dist/cjs/handlebars/runtime': 'vendor',
-        'handlebars/dist/cjs/handlebars/safe-string': 'vendor',
-        'handlebars/dist/cjs/handlebars/utils': 'vendor',
-        'handlebars/runtime': 'vendor',
+        'lodash': 'bootstrap',
+        'handlebars/dist/cjs/handlebars.runtime': 'bootstrap',
+        'handlebars/dist/cjs/handlebars/base': 'bootstrap',
+        'handlebars/dist/cjs/handlebars/exception': 'bootstrap',
+        'handlebars/dist/cjs/handlebars/runtime': 'bootstrap',
+        'handlebars/dist/cjs/handlebars/safe-string': 'bootstrap',
+        'handlebars/dist/cjs/handlebars/utils': 'bootstrap',
+        'handlebars/runtime': 'bootstrap',
 
-        'vendor': 'vendor',
-        'vendor/packages': 'vendor',
-        'vendor/require-packages': 'vendor'
+        'vendor': 'bootstrap',
+        'vendor/packages': 'bootstrap',
+        'vendor/require-packages': 'bootstrap'
       });
 
-      expect(CircusAMD.amdPaths(config, true)).to.eql({
+      expect(CircusAMD.amdPaths(config, 'empty:')).to.eql({
         'lodash': 'empty:',
         'handlebars/dist/cjs/handlebars.runtime': 'empty:',
         'handlebars/dist/cjs/handlebars/base': 'empty:',
