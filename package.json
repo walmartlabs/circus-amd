@@ -23,7 +23,7 @@
   "homepage": "https://github.com/walmartlabs/circus-amd",
   "devDependencies": {
     "chai": "^1.10.0",
-    "circus": "^1.2.1",
+    "circus": "^2.0.0",
     "gulp": "^3.8.10",
     "gulp-istanbul": "^0.6.0",
     "gulp-jscs": "^1.4.0",
