@@ -26,6 +26,12 @@ describe('loader integration', function() {
       var html = fs.readFileSync(__dirname + '/client/initial-route.html');
       fs.writeFileSync(outputDir + '/index.html', html);
 
+    var require = fs.readFileSync(__dirname + '/client/require.js');
+    fs.writeFileSync(outputDir + '/require.js', require);
+
+    var exec = fs.readFileSync(__dirname + '/fixtures/amd-exec.js');
+    fs.writeFileSync(outputDir + '/exec.js', exec);
+
       done();
     });
   });
@@ -45,17 +51,69 @@ describe('loader integration', function() {
     });
   });
 
-  it('should expose externals to amd', function(done) {
+  it('should create glue boilerplate', function(done) {
     var vendorEntry = Path.resolve(__dirname + '/fixtures/require-packages.js');
 
     var html = fs.readFileSync(__dirname + '/client/require.html');
     fs.writeFileSync(outputDir + '/index.html', html);
 
-    var require = fs.readFileSync(__dirname + '/client/require.js');
-    fs.writeFileSync(outputDir + '/require.js', require);
+    var config = Circus.config({
+      entry: vendorEntry,
+      output: {
+        component: 'vendor',
 
-    var exec = fs.readFileSync(__dirname + '/fixtures/amd-exec.js');
-    fs.writeFileSync(outputDir + '/exec.js', exec);
+        path: outputDir + '/vendor',
+        filename: 'vendor.js'
+      }
+    });
+
+    webpack(config, function(err, status) {
+      expect(err).to.not.exist;
+      expect(status.compilation.errors).to.be.empty;
+      expect(status.compilation.warnings).to.be.empty;
+
+      config = Circus.config({
+        output: {
+          path: outputDir
+        },
+
+        resolve: {
+          modulesDirectories: [
+            outputDir
+          ]
+        }
+      });
+      config = CircusAMD.config(config);
+
+      webpack(config, function(err, status) {
+        expect(err).to.not.exist;
+        expect(status.compilation.errors).to.be.empty;
+        expect(status.compilation.warnings).to.be.empty;
+
+        runPhantom(function(err, loaded) {
+          expect(loaded.scripts.length).to.equal(5);
+          expect(loaded.scripts[0]).to.match(/bootstrap.js$/);
+          expect(loaded.scripts[1]).to.match(/vendor.js$/);
+          expect(loaded.scripts[2]).to.match(/1\.vendor.js$/);
+          expect(loaded.scripts[3]).to.match(/require.js$/);
+          expect(loaded.scripts[4]).to.match(/exec.js$/);
+
+          expect(loaded.log).to.eql([
+            '_: true Handlebars: true',
+            'App: _: true Handlebars: true Vendor: true'
+          ]);
+
+          done();
+        });
+      });
+    });
+  });
+
+  it('should expose externals to amd', function(done) {
+    var vendorEntry = Path.resolve(__dirname + '/fixtures/require-packages.js');
+
+    var html = fs.readFileSync(__dirname + '/client/require.html');
+    fs.writeFileSync(outputDir + '/index.html', html);
 
     var config = Circus.config({
       entry: vendorEntry,
