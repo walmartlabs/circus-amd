@@ -32,7 +32,7 @@
 
     for (var name in exports) {
       (function(componentName, name) {
-        define(name, ['circus-chunk!' + componentName + '_' + chunks[exports[name]]], function() {
+        define(name, ['circus-chunk!' + componentName + '_' + (chunks === true ? 0 : chunks[exports[name]])], function() {
           return installedComponents[componentName](name);
         });
       })(componentName, name);
