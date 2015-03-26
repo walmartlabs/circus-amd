@@ -12,11 +12,15 @@
           componentName = match[1];
 
       // Load the component itself
-      loadComponent(componentName, function() {
+      loadComponent(componentName, function(component) {
         // Load the chunk for this component
-        installedComponents[componentName].e(match[2], function() {
+        if (!component.e) {
           onload();
-        });
+        } else {
+          component.e(match[2], function() {
+            onload();
+          });
+        }
       });
     }
   });
