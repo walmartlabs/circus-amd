@@ -26,11 +26,11 @@ describe('loader integration', function() {
       var html = fs.readFileSync(__dirname + '/client/initial-route.html');
       fs.writeFileSync(outputDir + '/index.html', html);
 
-    var require = fs.readFileSync(__dirname + '/client/require.js');
-    fs.writeFileSync(outputDir + '/require.js', require);
+      var require = fs.readFileSync(__dirname + '/client/require.js');
+      fs.writeFileSync(outputDir + '/require.js', require);
 
-    var exec = fs.readFileSync(__dirname + '/fixtures/amd-exec.js');
-    fs.writeFileSync(outputDir + '/exec.js', exec);
+      var exec = fs.readFileSync(__dirname + '/fixtures/amd-exec.js');
+      fs.writeFileSync(outputDir + '/exec.js', exec);
 
       done();
     });
@@ -98,10 +98,15 @@ describe('loader integration', function() {
           expect(loaded.scripts[3]).to.match(/require.js$/);
           expect(loaded.scripts[4]).to.match(/exec.js$/);
 
-          expect(loaded.log).to.eql([
-            '_: true Handlebars: true',
-            'App: _: true Handlebars: true Vendor: true'
-          ]);
+          // The root-level webpack module should always run first.
+          expect(loaded.log[0]).to.eql("circus module dependency should be first");
+
+          // The logs below are added within functions that run asynchronously at about
+          // the same time.  Since order may not be deterministic, just assert that both
+          // are present by the time things wrap up.
+          expect(loaded.log)
+            .to.contain('_: true Handlebars: true').and
+            .to.contain('App: _: true Handlebars: true Vendor: true');
 
           done();
         });
@@ -139,10 +144,17 @@ describe('loader integration', function() {
         expect(loaded.scripts[3]).to.match(/require.js$/);
         expect(loaded.scripts[4]).to.match(/exec.js$/);
 
-        expect(loaded.log).to.eql([
-          '_: true Handlebars: true',
-          'App: _: true Handlebars: true Vendor: true'
-        ]);
+
+        // The root-level webpack module should always run first.
+        expect(loaded.log[0]).to.eql("circus module dependency should be first");
+
+        // The logs below are added within functions that run asynchronously at about
+        // the same time.  Since order may not be deterministic, just assert that both
+        // are present by the time things wrap up.
+        expect(loaded.log)
+          .to.contain('_: true Handlebars: true').and
+          .to.contain('App: _: true Handlebars: true Vendor: true');
+
 
         done();
       });
