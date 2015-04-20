@@ -11,7 +11,7 @@ var mochaTests = [
 ];
 
 gulp.task('eslint', function() {
-  return gulp.src(source)
+  return gulp.src(Array.prototype.concat(source, mochaTests))
     .pipe(eslint())
     .pipe(eslint.format('stylish'))
     .pipe(eslint.failAfterError());

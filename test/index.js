@@ -91,6 +91,8 @@ describe('loader integration', function() {
         expect(status.compilation.warnings).to.be.empty;
 
         runPhantom(function(err, loaded) {
+          expect(err).to.not.exist;
+
           expect(loaded.scripts.length).to.equal(5);
           expect(loaded.scripts[0]).to.match(/bootstrap.js$/);
           expect(loaded.scripts[1]).to.match(/vendor.js$/);
@@ -99,7 +101,7 @@ describe('loader integration', function() {
           expect(loaded.scripts[4]).to.match(/exec.js$/);
 
           // The root-level webpack module should always run first.
-          expect(loaded.log[0]).to.eql("circus module dependency should be first");
+          expect(loaded.log[0]).to.eql('circus module dependency should be first');
 
           // The logs below are added within functions that run asynchronously at about
           // the same time.  Since order may not be deterministic, just assert that both
@@ -137,6 +139,8 @@ describe('loader integration', function() {
       expect(status.compilation.warnings).to.be.empty;
 
       runPhantom(function(err, loaded) {
+        expect(err).to.not.exist;
+
         expect(loaded.scripts.length).to.equal(5);
         expect(loaded.scripts[0]).to.match(/bootstrap.js$/);
         expect(loaded.scripts[1]).to.match(/vendor.js$/);
@@ -146,7 +150,7 @@ describe('loader integration', function() {
 
 
         // The root-level webpack module should always run first.
-        expect(loaded.log[0]).to.eql("circus module dependency should be first");
+        expect(loaded.log[0]).to.eql('circus module dependency should be first');
 
         // The logs below are added within functions that run asynchronously at about
         // the same time.  Since order may not be deterministic, just assert that both
