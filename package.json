@@ -25,11 +25,9 @@
     "chai": "^1.10.0",
     "circus": "^4.1.0",
     "gulp": "^3.8.10",
+    "gulp-eslint": "^0.9.0",
     "gulp-istanbul": "^0.6.0",
-    "gulp-jscs": "^1.4.0",
-    "gulp-jshint": "^1.9.1",
     "gulp-mocha": "^2.0.0",
-    "jshint-stylish": "^1.0.0",
     "phantomjs": "^1.9.15",
     "temp": "^0.8.1",
     "webpack": "^1.5.3"
